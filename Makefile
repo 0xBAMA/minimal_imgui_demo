@@ -11,7 +11,7 @@
 #   pacman -S mingw-w64-i686-SDL
 #
 
-#CXX = g++
+CXX = g++
 #CXX = clang++
 
 EXE = example_sdl_opengl3
@@ -21,30 +21,16 @@ SOURCES += imgui.cpp imgui_demo.cpp imgui_draw.cpp imgui_widgets.cpp
 OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
 UNAME_S := $(shell uname -s)
 
-# CXXFLAGS = -I../ -I../../
-# CXXFLAGS += -g -Wall -Wformat
-CXXFLAGS = -g -Wall -Wformat
+CXXFLAGS = -Wall -Wformat
 LIBS =
 
 ##---------------------------------------------------------------------
 ## OPENGL LOADER
 ##---------------------------------------------------------------------
 
-## Using OpenGL loader: gl3w [default]
-# SOURCES += ../libs/gl3w/GL/gl3w.c
-# CXXFLAGS += -I../libs/gl3w -DIMGUI_IMPL_OPENGL_LOADER_GL3W
-
 ## Using OpenGL loader: glew
 ## (This assumes a system-wide installation)
 CXXFLAGS += -lGLEW -DIMGUI_IMPL_OPENGL_LOADER_GLEW
-
-## Using OpenGL loader: glad
-# SOURCES += ../libs/glad/src/glad.c
-# CXXFLAGS += -I../libs/glad/include -DIMGUI_IMPL_OPENGL_LOADER_GLAD
-
-## Using OpenGL loader: glbinding
-## (This assumes a system-wide installation)
-# CXXFLAGS += -lglbinding -DIMGUI_IMPL_OPENGL_LOADER_GLBINDING
 
 ##---------------------------------------------------------------------
 ## BUILD FLAGS PER PLATFORM
@@ -56,24 +42,6 @@ ifeq ($(UNAME_S), Linux) #LINUX
 
 	CXXFLAGS += `sdl2-config --cflags`
 	CFLAGS = $(CXXFLAGS)
-endif
-
-ifeq ($(UNAME_S), Darwin) #APPLE
-	ECHO_MESSAGE = "Mac OS X"
-	LIBS += -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo `sdl2-config --libs`
-	LIBS += -L/usr/local/lib -L/opt/local/lib
-
-	CXXFLAGS += `sdl2-config --cflags`
-	CXXFLAGS += -I/usr/local/include -I/opt/local/include
-	CFLAGS = $(CXXFLAGS)
-endif
-
-ifeq ($(findstring MINGW,$(UNAME_S)),MINGW)
-   ECHO_MESSAGE = "MinGW"
-   LIBS += -lgdi32 -lopengl32 -limm32 `pkg-config --static --libs sdl2`
-
-   CXXFLAGS += `pkg-config --cflags sdl2`
-   CFLAGS = $(CXXFLAGS)
 endif
 
 ##---------------------------------------------------------------------
@@ -102,4 +70,4 @@ $(EXE): $(OBJS)
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 clean:
-	rm -f $(EXE) $(OBJS)
+	rm -f $(OBJS)
